@@ -1,0 +1,5 @@
+- function:
+    schema: public
+    name: me
+  configuration:
+    session_argument: hasura_session

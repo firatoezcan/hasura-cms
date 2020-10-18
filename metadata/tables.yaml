@@ -1,0 +1,1204 @@
+- table:
+    schema: public
+    name: collaborators
+  object_relationships:
+  - name: project
+    using:
+      foreign_key_constraint_on: project_id
+  - name: role
+    using:
+      foreign_key_constraint_on: role_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - project_id
+      - user_id
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              user_id:
+                _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - role_id
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - _and:
+            - collaborators:
+                user_id:
+                  _eq: X-Hasura-User-Id
+            - roles:
+                grants:
+                  grant:
+                    _eq: change_collaborator_role
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - _and:
+            - collaborators:
+                user_id:
+                  _eq: X-Hasura-User-Id
+            - roles:
+                grants:
+                  grant:
+                    _eq: remove_collaborator
+- table:
+    schema: public
+    name: entries
+  object_relationships:
+  - name: model
+    using:
+      foreign_key_constraint_on: model_id
+  - name: status
+    using:
+      foreign_key_constraint_on: status_id
+  array_relationships:
+  - name: file_field_contents
+    using:
+      foreign_key_constraint_on:
+        column: entry_id
+        table:
+          schema: public
+          name: file_field_content
+  - name: multi_line_field_contents
+    using:
+      foreign_key_constraint_on:
+        column: entry_id
+        table:
+          schema: public
+          name: multi_line_field_content
+  - name: single_line_field_contents
+    using:
+      foreign_key_constraint_on:
+        column: entry_id
+        table:
+          schema: public
+          name: single_line_field_content
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: create_entries
+      columns:
+      - model_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - model_id
+      - status_id
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: read_entries
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: delete_entries
+- table:
+    schema: public
+    name: entry_status
+  object_relationships:
+  - name: entry
+    using:
+      foreign_key_constraint_on: entry_id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - entry_id
+      - id
+      - published
+      filter:
+        entry:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: read_entries
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - published
+      filter:
+        entry:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: publish_entries
+      check: null
+- table:
+    schema: public
+    name: file_field
+  object_relationships:
+  - name: model
+    using:
+      foreign_key_constraint_on: model_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: create_field
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - model_id
+      - position
+      - required
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - hidden
+      - required
+      - api_name
+      - description
+      - display_name
+      - id
+      - model_id
+      - position
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: read_field
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - position
+      - required
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: update_field
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: delete_field
+- table:
+    schema: public
+    name: file_field_content
+  object_relationships:
+  - name: field
+    using:
+      foreign_key_constraint_on: field_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: create_entries
+      columns:
+      - entry_id
+      - field_id
+      - file_location
+      - file_name
+      - height
+      - mime_type
+      - size
+      - width
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - height
+      - width
+      - mime_type
+      - file_location
+      - file_name
+      - entry_id
+      - field_id
+      - id
+      - size
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: read_entries
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - file_location
+      - file_name
+      - height
+      - mime_type
+      - size
+      - width
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: update_entries
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: delete_entries
+- table:
+    schema: public
+    name: models
+  object_relationships:
+  - name: project
+    using:
+      foreign_key_constraint_on: project_id
+  array_relationships:
+  - name: entries
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: entries
+  - name: file_fields
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: file_field
+  - name: multi_line_fields
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: multi_line_field
+  - name: single_line_fields
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: single_line_field
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: create_models
+      columns:
+      - api_name
+      - display_name
+      - project_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - display_name
+      - id
+      - project_id
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: read_models
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - display_name
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: update_models
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: delete_models
+- table:
+    schema: public
+    name: multi_line_field
+  object_relationships:
+  - name: model
+    using:
+      foreign_key_constraint_on: model_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: create_field
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - model_id
+      - position
+      - required
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - hidden
+      - required
+      - api_name
+      - description
+      - display_name
+      - id
+      - model_id
+      - position
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: read_field
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - position
+      - required
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: update_field
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: delete_field
+- table:
+    schema: public
+    name: multi_line_field_content
+  object_relationships:
+  - name: field
+    using:
+      foreign_key_constraint_on: field_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: create_entries
+      columns:
+      - content
+      - entry_id
+      - field_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - content
+      - entry_id
+      - field_id
+      - id
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: read_entries
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - content
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: update_entries
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: delete_entries
+- table:
+    schema: public
+    name: projects
+  object_relationships:
+  - name: owner
+    using:
+      foreign_key_constraint_on: owner_id
+  array_relationships:
+  - name: collaborators
+    using:
+      foreign_key_constraint_on:
+        column: project_id
+        table:
+          schema: public
+          name: collaborators
+  - name: models
+    using:
+      foreign_key_constraint_on:
+        column: project_id
+        table:
+          schema: public
+          name: models
+  - name: roles
+    using:
+      foreign_key_constraint_on:
+        column: project_id
+        table:
+          schema: public
+          name: roles
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        owner_id: x-hasura-User-Id
+      columns:
+      - description
+      - name
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - description
+      - id
+      - name
+      - owner_id
+      filter:
+        _or:
+        - owner_id:
+            _eq: X-Hasura-User-Id
+        - collaborators:
+            user_id:
+              _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - description
+      - name
+      filter:
+        _or:
+        - owner_id:
+            _eq: X-Hasura-User-Id
+        - collaborators:
+            _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - role:
+                grants:
+                  grant:
+                    _eq: change_project
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        owner_id:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: role_grants
+  object_relationships:
+  - name: role
+    using:
+      foreign_key_constraint_on: role_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        role:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: update_roles
+      columns:
+      - grant
+      - role_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - grant
+      - id
+      - role_id
+      filter:
+        role:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: read_roles
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        role:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: update_roles
+- table:
+    schema: public
+    name: roles
+  object_relationships:
+  - name: project
+    using:
+      foreign_key_constraint_on: project_id
+  array_relationships:
+  - name: collaborators
+    using:
+      foreign_key_constraint_on:
+        column: role_id
+        table:
+          schema: public
+          name: collaborators
+  - name: grants
+    using:
+      foreign_key_constraint_on:
+        column: role_id
+        table:
+          schema: public
+          name: role_grants
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: create_roles
+      columns:
+      - api_name
+      - display_name
+      - project_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - display_name
+      - id
+      - project_id
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: read_roles
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - display_name
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: update_roles
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        project:
+          _or:
+          - owner_id:
+              _eq: X-Hasura-User-Id
+          - collaborators:
+              _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  grants:
+                    grant:
+                      _eq: delete_roles
+- table:
+    schema: public
+    name: single_line_field
+  object_relationships:
+  - name: model
+    using:
+      foreign_key_constraint_on: model_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: create_field
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - model_id
+      - position
+      - required
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - position
+      - model_id
+      - display_name
+      - api_name
+      - description
+      - required
+      - hidden
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: read_field
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - api_name
+      - description
+      - display_name
+      - hidden
+      - position
+      - required
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: update_field
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        model:
+          project:
+            _or:
+            - owner_id:
+                _eq: X-Hasura-User-Id
+            - collaborators:
+                _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    grants:
+                      grant:
+                        _eq: delete_field
+- table:
+    schema: public
+    name: single_line_field_content
+  object_relationships:
+  - name: field
+    using:
+      foreign_key_constraint_on: field_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: create_entries
+      columns:
+      - content
+      - entry_id
+      - field_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - content
+      - entry_id
+      - field_id
+      - id
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: read_entries
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - content
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: update_entries
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        field:
+          model:
+            project:
+              _or:
+              - owner_id:
+                  _eq: X-Hasura-User-Id
+              - collaborators:
+                  _and:
+                  - user_id:
+                      _eq: X-Hasura-User-Id
+                  - role:
+                      grants:
+                        grant:
+                          _eq: delete_entries
+- table:
+    schema: public
+    name: users
+  array_relationships:
+  - name: collaborator_in
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          schema: public
+          name: collaborators
+  - name: owned_projects
+    using:
+      foreign_key_constraint_on:
+        column: owner_id
+        table:
+          schema: public
+          name: projects
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - email
+      - first_name
+      - id
+      - last_name
+      filter:
+        _or:
+        - id:
+            _eq: X-Hasura-User-Id
+        - owned_projects:
+            collaborators:
+              user_id:
+                _eq: X-Hasura-User-Id
+        - collaborator_in:
+            user_id:
+              _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - email
+      - first_name
+      - last_name
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check: null
