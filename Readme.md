@@ -19,7 +19,7 @@ The admin secret can be found within the `.env.example` file
 You can shut everything down with `docker-compose down`
 
 A good example query could be the following:
-```
+```graphql
 query Example {
   users {
     email
@@ -109,6 +109,52 @@ query Example {
             last_name
           }
         }
+      }
+    }
+  }
+}
+```
+
+or
+
+```graphql
+query Example2 {
+  users {
+    email
+    first_name
+    last_name
+    collaborator_in {
+      project {
+        name
+        models {
+          api_name
+          display_name
+          project_id
+          id
+        }
+        collaborators {
+          user {
+            email
+            first_name
+            last_name
+          }
+          role {
+            api_name
+            display_name
+            grants {
+              grant
+            }
+          }
+        }
+        owner {
+          email
+          first_name
+          last_name
+        }
+      }
+      role {
+        display_name
+        api_name
       }
     }
   }
