@@ -17,3 +17,102 @@ The console is started with `./hasura-console.sh` to enable automatic generation
 The admin secret can be found within the `.env.example` file
 
 You can shut everything down with `docker-compose down`
+
+A good example query could be the following:
+```
+query Example {
+  users {
+    email
+    first_name
+    last_name
+    owned_projects {
+      name
+      models {
+        api_name
+        display_name
+        project_id
+        id
+        file_fields {
+          id
+          api_name
+          description
+          display_name
+          position
+        }
+        multi_line_fields {
+          id
+          api_name
+          description
+          display_name
+          position
+        }
+        single_line_fields {
+          id
+          api_name
+          description
+          display_name
+          position
+        }
+        entries {
+          file_field_contents {
+            id
+          }
+        }
+      }
+      collaborators {
+        user {
+          email
+          first_name
+          last_name
+        }
+      }
+    }
+    collaborator_in {
+      project {
+        name
+        models {
+          api_name
+          display_name
+          project_id
+          id
+          file_fields {
+            id
+            api_name
+            description
+            display_name
+            position
+          }
+          multi_line_fields {
+            id
+            api_name
+            description
+            display_name
+            position
+          }
+          single_line_fields {
+            id
+            api_name
+            description
+            display_name
+            position
+          }
+          entries {
+            file_field_contents {
+              id
+            }
+          }
+        }
+        collaborators {
+          user {
+            email
+            first_name
+            last_name
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+If there is no data returned the migration probably didn't happen. In that case check the init.sql file in the migrations folder and run it yourself via the Hasura console.
