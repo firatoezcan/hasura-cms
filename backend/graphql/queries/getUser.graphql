@@ -1,0 +1,9 @@
+# Refactor this to get the user with the correct pin code supplied
+query GetUser($id: uuid!) {
+  users_by_pk(id: $id) {
+    id
+    first_name
+    last_name
+    email
+  }
+}

@@ -17,6 +17,7 @@
       columns:
       - id
       - project_id
+      - role_id
       - user_id
       filter:
         project:

@@ -11,6 +11,8 @@ services:
     - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "3254:5432"
 
   graphql-engine:
     << : *restart_policy
@@ -20,10 +22,9 @@ services:
     - ./metadata:/hasura-metadata
     depends_on:
     - "postgres"
-    ports:
-    - "8080:8080"
+    network_mode: "host"
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@localhost:3254/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set "false" to disable console
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET}
       HASURA_GRAPHQL_JWT_SECRET: "{\"type\":\"HS256\",\"key\":\"${HASURA_JWT_SECRET}\",\"claims_format\":\"json\",\"issuer\":\"${HASURA_JWT_ISSUER}\"}"

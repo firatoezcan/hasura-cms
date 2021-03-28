@@ -1,0 +1,32 @@
+overwrite: true
+schema: 
+  - "http://localhost:8080/v1/graphql":
+      headers:
+        X-Hasura-Admin-Secret: ${HASURA_ADMIN_SECRET}
+generates:
+  generated/hasuraTypes.ts:
+    documents: "graphql/**/*.graphql"
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"
+  generated/queries.ts:
+    documents: "graphql/queries/*.graphql"
+    preset: import-types
+    presetConfig:
+      typesPath: ./hasuraTypes
+      importTypesNamespace: Types
+    config:
+      typesPrefix: Types.
+    plugins:
+      - "typescript-graphql-request"
+  generated/mutations.ts:
+    documents: "graphql/mutations/*.graphql"
+    preset: import-types
+    presetConfig:
+      typesPath: ./hasuraTypes
+      importTypesNamespace: Types
+    config:
+      typesPrefix: Types.
+    plugins:
+      - "typescript-graphql-request"

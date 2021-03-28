@@ -1,6 +1,22 @@
-actions: []
+actions:
+- name: login
+  definition:
+    kind: synchronous
+    handler: http://localhost:3001/api/login
+  permissions:
+  - role: anonymous
+  - role: user
+- name: register
+  definition:
+    kind: synchronous
+    handler: http://localhost:3001/api/register
+  permissions:
+  - role: anonymous
+  - role: user
 custom_types:
   enums: []
   input_objects: []
-  objects: []
+  objects:
+  - name: LoginOutput
+  - name: RegisterOutput
   scalars: []
