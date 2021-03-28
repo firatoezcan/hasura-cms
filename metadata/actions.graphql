@@ -1,15 +1,26 @@
 type Mutation {
-  login(id: uuid!): LoginOutput
+  login (
+    id: uuid!
+  ): LoginOutput
 }
+
 
 type Mutation {
-  register(firstName: String!, lastName: String!, email: String!): RegisterOutput
+  register (
+    firstName: String!
+    lastName: String!
+    email: String!
+  ): RegisterOutput
 }
 
+
+
+
 type LoginOutput {
-  token: String!
+  token : String!
 }
 
 type RegisterOutput {
-  id: uuid!
+  id : uuid!
 }
+
