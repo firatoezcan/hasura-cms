@@ -2,7 +2,7 @@ import cn from "classnames";
 import React, { useState } from "react";
 // Refactor this when bundle size actually matters
 import * as HeroIcons from "heroicons-react";
-import { isNestedNavItem, isSingleNavItem, NavItem, SingleNavItem, NestedNavItem } from "./types";
+import { isNestedNavItem, isSingleNavItem, NavItem, SingleNavItemType, NestedNavItemType } from "./types";
 
 const NavItemStyle = ({ isActive }: { isActive: boolean }) =>
   cn("flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium rounded-md group hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500", {
@@ -12,7 +12,7 @@ const NavItemStyle = ({ isActive }: { isActive: boolean }) =>
 
 const IconStyle = ({ isActive }: { isActive: boolean }) => cn("mr-3 h-6 w-6 group-hover:text-gray-500", { "text-gray-500": isActive, "text-gray-400": !isActive });
 
-const SingleNavItem = ({ title, href, icon }: SingleNavItem) => {
+const SingleNavItem = ({ title, href, icon }: SingleNavItemType) => {
   const Icon = icon ? HeroIcons[icon] : () => null;
   const isActive = location.pathname === href;
   return (
@@ -25,7 +25,7 @@ const SingleNavItem = ({ title, href, icon }: SingleNavItem) => {
   );
 };
 
-const NestedNavItem = ({ title, icon, subItems }: NestedNavItem) => {
+const NestedNavItem = ({ title, icon, subItems }: NestedNavItemType) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const Icon = icon ? HeroIcons[icon] : () => null;
@@ -68,9 +68,9 @@ const NavigationConfig: Array<NavItem> = [
 export function Navigation() {
   return (
     <nav className="flex-1 px-2 space-y-1 bg-white" aria-label="Sidebar">
-      {NavigationConfig.map((navItem) => {
-        if (isSingleNavItem(navItem)) return <SingleNavItem {...navItem} />;
-        if (isNestedNavItem(navItem)) return <NestedNavItem {...navItem} />;
+      {NavigationConfig.map((navItem, index) => {
+        if (isSingleNavItem(navItem)) return <SingleNavItem key={navItem.title + navItem.href + index} {...navItem} />;
+        if (isNestedNavItem(navItem)) return <NestedNavItem key={navItem.title + "nested" + index} {...navItem} />;
       })}
     </nav>
   );

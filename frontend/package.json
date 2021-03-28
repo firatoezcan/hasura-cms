@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "gql-generate": "graphql-codegen -r dotenv/config --config codegen.yml"
+    "codegen": "graphql-codegen -r dotenv/config --config codegen.yml"
   },
   "dependencies": {
     "@headlessui/react": "^0.3.1",

@@ -1,0 +1,29 @@
+query TestMe {
+  me {
+    id
+    owned_projects {
+      id
+      name
+    }
+  }
+}
+
+query TestProjects {
+  projects {
+    id
+    name
+    collaborators {
+      user {
+        first_name
+        email
+      }
+    }
+    models {
+      file_fields {
+        id
+        position
+        required
+      }
+    }
+  }
+}

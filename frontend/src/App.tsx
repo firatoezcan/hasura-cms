@@ -6,11 +6,14 @@ import { Input } from "./components/Input";
 import { useUserContext, withUserContext } from "./contexts/UserContext";
 import { createUrqlClient } from "./createUrqlClient";
 import { useLoginMutation, useRegisterMutation } from "./generated/mutations";
-import { useMeQuery } from "./generated/queries";
+import { useMeQuery, useTestMeQuery, useTestProjectsQuery } from "./generated/queries";
 
 const CreateAndLoginUser = () => {
   const { token, setToken, claims } = useUserContext();
   const [registerData, register] = useRegisterMutation();
+  const [testProject] = useTestProjectsQuery();
+  const [testMe] = useTestMeQuery();
+
   const [loginData, login] = useLoginMutation();
   useEffect(() => {
     if (!loginData.data || loginData.fetching) return;
@@ -25,6 +28,7 @@ const CreateAndLoginUser = () => {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8 space-y-4">
+        <Input label="Current token" value={token || ""} readOnly />
         <Button
           type="button"
           onClick={() =>
@@ -58,19 +62,23 @@ const CreateAndLoginUser = () => {
       >
         <div className="flex flex-wrap mb-4 -mx-2">
           <div className="w-1/2 px-2">
-            <Input label="First Name" name="firstName" value="Firat" />
+            <Input label="First Name" name="firstName" value="Firat" readOnly />
           </div>
           <div className="w-1/2 px-2">
-            <Input label="Last Name" name="lastName" value="Özcan" />
+            <Input label="Last Name" name="lastName" value="Özcan" readOnly />
           </div>
           <div className="w-1/2 px-2">
-            <Input label="Email" name="email" value={`firat+${Date.now()}@example.com`} />
+            <Input label="Email" name="email" value={`firat+${Date.now()}@example.com`} readOnly />
           </div>
         </div>
         <Button type="submit">Create new user</Button>
       </form>
-      <pre>{JSON.stringify(claims, null, 2)}</pre>
-      <pre>{JSON.stringify(registerData.data, null, 2)}</pre>
+      <div className="text-xs">
+        <pre className="text-green-700">{JSON.stringify(claims, null, 2)}</pre>
+        <pre className="text-red-700">{JSON.stringify(testProject.data, null, 2)}</pre>
+        <pre className="text-blue-700">{JSON.stringify(testMe.data, null, 2)}</pre>
+        <pre className="text-yellow-700">{JSON.stringify(registerData.data, null, 2)}</pre>
+      </div>
     </div>
   );
 };
@@ -87,7 +95,6 @@ const AuthBarrier: FC = ({ children }) => {
 
 function App() {
   const { token, logout, claims } = useUserContext();
-  console.log(token);
   const client = useMemo(() => {
     const isLoggedIn = Boolean(token);
     if (isLoggedIn === null) {

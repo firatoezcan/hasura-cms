@@ -55,11 +55,6 @@ export type RegisterOutput = {
   id: Scalars['uuid'];
 };
 
-export type SampleOutput = {
-  __typename?: 'SampleOutput';
-  userId: Scalars['uuid'];
-};
-
 /** expression to compare columns of type String. All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
   _eq?: Maybe<Scalars['String']>;
@@ -5399,6 +5394,45 @@ export type MeQuery = (
   )> }
 );
 
+export type TestMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TestMeQuery = (
+  { __typename?: 'query_root' }
+  & { me: Array<(
+    { __typename?: 'users' }
+    & Pick<Users, 'id'>
+    & { owned_projects: Array<(
+      { __typename?: 'projects' }
+      & Pick<Projects, 'id' | 'name'>
+    )> }
+  )> }
+);
+
+export type TestProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TestProjectsQuery = (
+  { __typename?: 'query_root' }
+  & { projects: Array<(
+    { __typename?: 'projects' }
+    & Pick<Projects, 'id' | 'name'>
+    & { collaborators: Array<(
+      { __typename?: 'collaborators' }
+      & { user: (
+        { __typename?: 'users' }
+        & Pick<Users, 'first_name' | 'email'>
+      ) }
+    )>, models: Array<(
+      { __typename?: 'models' }
+      & { file_fields: Array<(
+        { __typename?: 'file_field' }
+        & Pick<File_Field, 'id' | 'position' | 'required'>
+      )> }
+    )> }
+  )> }
+);
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -5484,7 +5518,6 @@ export type ResolversTypes = {
   LoginOutput: ResolverTypeWrapper<LoginOutput>;
   String: ResolverTypeWrapper<Scalars['String']>;
   RegisterOutput: ResolverTypeWrapper<RegisterOutput>;
-  SampleOutput: ResolverTypeWrapper<SampleOutput>;
   String_comparison_exp: String_Comparison_Exp;
   collaborators: ResolverTypeWrapper<Collaborators>;
   collaborators_aggregate: ResolverTypeWrapper<Collaborators_Aggregate>;
@@ -5861,7 +5894,6 @@ export type ResolversParentTypes = {
   LoginOutput: LoginOutput;
   String: Scalars['String'];
   RegisterOutput: RegisterOutput;
-  SampleOutput: SampleOutput;
   String_comparison_exp: String_Comparison_Exp;
   collaborators: Collaborators;
   collaborators_aggregate: Collaborators_Aggregate;
@@ -6193,11 +6225,6 @@ export type LoginOutputResolvers<ContextType = any, ParentType extends Resolvers
 
 export type RegisterOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['RegisterOutput'] = ResolversParentTypes['RegisterOutput']> = {
   id?: Resolver<ResolversTypes['uuid'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SampleOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['SampleOutput'] = ResolversParentTypes['SampleOutput']> = {
-  userId?: Resolver<ResolversTypes['uuid'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -7289,7 +7316,6 @@ export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type Resolvers<ContextType = any> = {
   LoginOutput?: LoginOutputResolvers<ContextType>;
   RegisterOutput?: RegisterOutputResolvers<ContextType>;
-  SampleOutput?: SampleOutputResolvers<ContextType>;
   collaborators?: CollaboratorsResolvers<ContextType>;
   collaborators_aggregate?: Collaborators_AggregateResolvers<ContextType>;
   collaborators_aggregate_fields?: Collaborators_Aggregate_FieldsResolvers<ContextType>;

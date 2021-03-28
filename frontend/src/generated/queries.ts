@@ -18,3 +18,43 @@ export const MeDocument = gql`
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<Types.MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<Types.MeQuery>({ query: MeDocument, ...options });
 };
+export const TestMeDocument = gql`
+    query TestMe {
+  me {
+    id
+    owned_projects {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export function useTestMeQuery(options: Omit<Urql.UseQueryArgs<Types.TestMeQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Types.TestMeQuery>({ query: TestMeDocument, ...options });
+};
+export const TestProjectsDocument = gql`
+    query TestProjects {
+  projects {
+    id
+    name
+    collaborators {
+      user {
+        first_name
+        email
+      }
+    }
+    models {
+      file_fields {
+        id
+        position
+        required
+      }
+    }
+  }
+}
+    `;
+
+export function useTestProjectsQuery(options: Omit<Urql.UseQueryArgs<Types.TestProjectsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<Types.TestProjectsQuery>({ query: TestProjectsDocument, ...options });
+};

@@ -1,21 +1,21 @@
 import * as HeroIcons from "heroicons-react";
 
-type BaseNavItem = {
+type BaseNavItemType = {
   title: string | ((isAdmin: boolean) => string);
   adminOnly?: boolean;
   icon?: keyof typeof HeroIcons;
   badge?: (isAdmin: boolean, isActive: boolean) => React.ReactElement;
 };
 
-export type SingleNavItem = BaseNavItem & {
+export type SingleNavItemType = BaseNavItemType & {
   href: string;
 };
 
-export type NestedNavItem = BaseNavItem & {
-  subItems: Array<SingleNavItem>;
+export type NestedNavItemType = BaseNavItemType & {
+  subItems: Array<SingleNavItemType>;
 };
 
-export type NavItem = SingleNavItem | NestedNavItem;
+export type NavItem = SingleNavItemType | NestedNavItemType;
 
-export const isSingleNavItem = (item: NavItem): item is SingleNavItem => typeof ((item as unknown) as SingleNavItem).href !== "undefined";
-export const isNestedNavItem = (item: NavItem): item is NestedNavItem => Array.isArray(((item as unknown) as NestedNavItem).subItems);
+export const isSingleNavItem = (item: NavItem): item is SingleNavItemType => typeof ((item as unknown) as SingleNavItemType).href !== "undefined";
+export const isNestedNavItem = (item: NavItem): item is NestedNavItemType => Array.isArray(((item as unknown) as NestedNavItemType).subItems);

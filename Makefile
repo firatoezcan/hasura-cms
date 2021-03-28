@@ -8,9 +8,11 @@ dev:
 	make -j 2 backend-dev frontend-dev
 
 backend-build:
+	make backend-codegen
 	yarn --cwd "backend" build;
 
 frontend-build:
+	make frontend-codegen
 	yarn --cwd "frontend" build;
 
 build:
@@ -37,6 +39,15 @@ frontend-install:
 
 install:
 	make -j 2 backend-install frontend-install
+
+backend-codegen:
+	yarn --cwd "backend" codegen;
+
+frontend-codegen:
+	yarn --cwd "frontend" codegen;
+
+codegen:
+	make -j 2 backend-codegen frontend-codegen
 
 cp-env:
 	\cp -r .env frontend/.env && \cp -r .env backend/.env
