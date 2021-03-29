@@ -9,10 +9,10 @@ You need:
 - `docker-compose`
 - `yarn`, `npm` also works but you would need to change the commands in `Makefile`
 
-**Important!!:** Change the secrets within `.env.example` and then rename it to `.env` and run `make cp-env`
-Run `make install` followed by `docker-compose up -d`
-This should start the initial setup and migration for Hasura/Postgres
-You can start the web services via `make dev` and build/serve them via `make build/serve` respectively
+**Important!!:** Change the secrets within `.env.example` and then rename it to `.env` and run `make cp-env`  
+Run `make install` followed by `docker-compose up -d`  
+This should start the initial setup and migration for Hasura/Postgres  
+You can start the web services via `make dev` and build/serve them via `make build/serve` respectively  
 
 The console is started with `sh hasura-console.sh` to enable automatic generation of migration files on change  
 The admin secret can be found within the `.env.example` file
@@ -167,7 +167,7 @@ If there is no data returned the migration probably didn't happen. In that case 
 
 ## Todos
 
-Make all subfolders use the same .env in the root folder instead of copying it over
-Add refresh token
-Dont load all icons into the bundle D:
-Move Hasura stuff into own folder
+Make all subfolders use the same .env in the root folder instead of copying it over  
+Add refresh token  
+Dont load all icons into the bundle D:  
+Move Hasura stuff into own folder  
